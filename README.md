@@ -3,14 +3,14 @@ This document describes some of the scripts that I created for my internship pro
 
 The dataset that was used consists of a reference and future dataset of netCDF data. The spatial resolution of the dataset is 10 x 10 km and has a daily timestep covering 1981 - 2010 (reference), and 2011 - 2100 (future). Data consists of minimum, maximum and average temperature values, and a precipitation sum. The projection of the dataset is WGS 84 UTM Zone 45N; EPSG: 32645.
 
-#### Climate data operators
+## Climate data operators
 The [climate data operators](https://code.zmaw.de/projects/cdo) from the Max Planck Institute are a collection of powerful operators for handling netCDF files and performing calculations with climate datasets. For the calculation of climate indices, many different functions have been created by the institute that perform one specific task, such as calculating the yearly mean precipitation, or the maximum temperature. Other functions are aimed at calculating indices of temperature and precipitation extremes. These climate data operators were used to perform the calculations in the Indus Ganges and Brahmaputra basins. Two such examples are shown below; one function to calculate the number of consecutive dry days, and another function to calculate the number of heat waves.
 
-#####	Preparation netCDF File
+#### Preparation netCDF File
 First, import the required packages to extract information from the netCDF files.
 
-# Import modules
 ```Python
+# Import modules
 from cdo import *
 cdo = Cdo()
 import numpy as np
@@ -32,7 +32,7 @@ ifile_max_temp = ref_files+'/max_temp.nc'
 input_file = "/Volumes/Naamloos/climate_data/final_files/prec_mean.nc"
 ```
 
-##### Consecutive dry days
+#### Consecutive dry days
 The function shown below is used to calculate the number of consecutive dry days for a given netCDF input file. The user can enter a threshold (using the “raw_input” functionality) in millimetres to count the number of consecutive days below the provided threshold (default is 1 mm). The output file contains the name of calculated index, along with with the minimum number of days and precipitation threshold for a dry period.
 
 ```Python
@@ -60,7 +60,7 @@ def consecutive_dry_days():
    '{2}'.format(*inputs))
 ```
 
-##### Number of heat waves
+#### Number of heat waves
 Similarly, the number of heat waves in a certain period can be calculated with “heat_wave” function. The user can define the minimum number of days and temperature threshold to calculate the number of heat waves.
 
 ```Python
@@ -92,10 +92,10 @@ def heat_wave():
     input_days + '{1}'.format(*inputs) + '{2}'.format(*inputs))
 ```
 
-#### Projection
+## Projection
 The final output from the CDO functions is ready to be displayed in QGIS or other GIS software. However, when dealing with many output products, plotting of the output can become a tedious task. Many different output products were created during the project. Therefore, the process of plotting was automated as much as possible. The “Basemap” package from the extensive “matplotlib” Python library was used to plot the output on a basemap.
 
-#####	Load Packages
+####	Load Packages
 First, load the required Python packages for plotting and reprojecting with Basemap.
 
 ```Python
@@ -107,7 +107,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 ```
 
-#####	Read netCDF
+####	Read netCDF
 Once an input file is selected, it can be read using the “Dataset” function from the netCDF4 package to obtain information about the file.  The example shown below contains yearly precipitation data (from 1981 to 2010) for the entire IGB basin.
 
 ```Python
@@ -120,7 +120,7 @@ var = file_handle.variables['P'][:]  # (30, 320, 190)
 file_handle.close()
 ```
 
-#####	Reprojection
+##	Reprojection
 The basemap and netCDF file are not yet in the same projection. The “pyproj” function was used to project from the WGS 84 / UTM Zone 45N to WGS 84 projection. The function input can simply be given as an EPSG-code (as used in “Source projection”) or a “Proj4” string (as used in “Target projection”), obtained from a [spatial reference website](http://spatialreference.org/).
 
 ```Python
@@ -139,7 +139,7 @@ lons, lats = np.meshgrid(lon, lat)
 tr_lon, tr_lat = pyproj.transform(UTM_45N, WGS84, lons, lats)
 ```
 
-#####	Plot Using Basemap
+####	Plot Using Basemap
 Finally, the [basemap](http://matplotlib.org/basemap/) library is used to define the location and extent of the study area. This background map can easily be adapted and elaborated by adding country boundaries, coastlines or a satellite background.
 
 ```Python
@@ -152,9 +152,9 @@ cs = m.pcolormesh(xi, yi, pr[0], cmap='YlGnBu')
 plt.show()
 ```
 
-![projection](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/projection.png =250x)
+![projection](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/projection.png)
 
-#### Dictionary
+## Dictionary
 An example of a dictionary used for this project is displayed below, showing several key – value pairs, where each key in the dictionary points to a unique file. The title that is stored in the key of a dictionary is almost complete. However, it is still missing the district name for the different areas in the study area. This name is added at the end of each value, for each key in the dictionary. This makes it possible to iterate over the districts and subsequently print the full title names to the map.
 
 ```Python
@@ -165,7 +165,7 @@ dictionary = {
 'temp_mean':['temp_mean_1981-2010_yearly.nc', 'Tavg', 'Mean temperature (degrees Celsius)', 'Yearly mean temperature in '],
 ```
 
-#### Read data from dictionary
+## Read data from dictionary
 Once a dictionary is constructed, it can be used to extract information for plotting purposes. Before a plotting function can use the data from a dictionary, it has to be extracted. The function in this chapter achieves this by reading the data from a key, which is linked to a file. The function shown below reads in a file and extracts the variable name from the input file. In addition, it reads the minimum and maximum value for this variable (e.g. precipitation in mm). The extracted data from the variable is used to create a map. The minimum and maximum value of the variable are used to define the range of the scalebar when the data is plotting with the Basemap package. This guarantees that the entire range of values is always covered, regardless of the type of data that is plotted.
 
 ```Python
@@ -195,10 +195,10 @@ def read_data(dictionary, key):
 read_scalebar(dictionary, 'prec_mean')
 ```
 
-#### Map output
+## Map output
 After prepation of the data, the reprojection and the creation of the dictionary, the data can be plotted. Three main types of map output were created: (i) maps of precipitation and tempterature extremes, (ii) maps of yearly values (e.g. mean precipitation) and (iii) maps with daily output (e.g. maximum temperature). Three functions were created to process the data and create the desired output. This chapter shows one of these functions: creating daily outputs.
 
-##### Maps of Daily Precipitation and Temperature Values – Preparation of the Data
+#### Maps of Daily Precipitation and Temperature Values – Preparation of the Data
 ```Python
 import os
 import numpy as np
@@ -243,7 +243,7 @@ For each map, a date has to be printed in the title. The “date_range” functi
     precipitation, maximum temperature)')
 ```
 
-##### Create Daily Output Values with Basemap
+#### Create Daily Output Values with Basemap
 After the user has defined the dictionary, key and colour scheme to be used, the function can iterate over the number of days that are specified in the function input. For each iteration a basemap background map will be created that uses a Transverse Mercator projection and the extent of the entire IGB basin. For plotting other districts within the basin, “if” statements are additionally used in the function to determine which basemap should be plotted.
 
 ```Python
@@ -258,7 +258,7 @@ After the user has defined the dictionary, key and colour scheme to be used, the
         m.shadedrelief()
 ```
 
-##### Read Data and Scale Bar Range from Dictionary
+#### Read Data and Scale Bar Range from Dictionary
 Next, the netCDF data can be plotted over the background map. This process starts with reading the coordinates for plotting. “Pcolormesh” is used to plot the data of each iteration over the basemap, and uses the user-defined colorscheme. Subsequenlty, “colorbar” is used to create the accompanying scalebar of the map, using the scale bar text from the dictionary. Furthermore, the minimum and maximum values of the netCDF data are read though the “read_data” function, which extracts the minimum and maximum values from the data arrays. Finally, “clim” is used to integrate these values during the plotting process.
 
 ```Python
@@ -272,9 +272,9 @@ Next, the netCDF data can be plotted over the background map. This process start
         plt.clim(sb_min, sb_max)
 ```
 
-![daily_output](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/daily_output.png =250x)
+![daily_output](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/daily_output.png)
 
-##### Write output
+#### Write output
 The map is now almost ready to be saved to disk. All that remains is creating an appropriate map title and file name. These should include the specific day for which the map was created. This is achieved by using the “format” functionality that allows user input or values that are stored in a variable to be “glued” together into one appropriate title or file name.
 
 ```Python
@@ -297,12 +297,12 @@ Before the map is saved to disk, the function checks if the file already exists.
         plt.close()
 ```
 
-#### Clip raster using GDAL
+## Clip raster using GDAL
 The function that creates the final maps the was shown in the previous chapter, and chapter 5 described the function to derive the minimum and maximum values of the data, in order to plot the entire range of values in the map. However, for the districts (Chitwan, Faisalbad, Gandaki, Gilgit and Pothwar) only a small proportion of the map is shown. Therefore, also the range of values for a certain variable often varies substantially from one location to the other. The full scale range can therefore not be used for each district, as the colourscheme would not be appropriate for the region of interest.
 
 One solution to this problem is to clip each output file used for plotting to a new extent. This guarantees that only the values proximate to the district area are considered for the colour scheme and scale bar. For this project, many output files were clipped to a new extent (~400 files). This was achieved using GDAL Translate from a Python script, which iterates over a folder with files and executes a piece of code in the command line (bash).
 
-#####	Dictionary with district extents
+####	Dictionary with district extents
 The functionality to send code to the command line from within Python is part of the “subprocess” package. First, a dictionary with the extents of the districts is contructed. The keys in the dictionary are used to iterate over the coordinates and clip each output file accordingly.
 
 ```Python
@@ -317,7 +317,7 @@ extents_dict ={'chitwan':[166058.87, 3116189.07, 312721.71, 2998326.01],
                'pothwar':[-1035816.99, 3958256.70, -642195.94, 3578737.26]}
 ```
 
-#####	Clip Raster Files Using GDAL Translate
+####	Clip Raster Files Using GDAL Translate
 The function input only requires the dictionary with the extents as input. After defining an input and output folder, the files can be clipped to their new extent.
 
 ```Python
@@ -367,12 +367,12 @@ What remains is the GDAL Translate code, which is sent to the command line using
         print 'All done!'
 ```
 
-![clipped_files](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/clipped_files.png =250x)
+![clipped_files](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/clipped_files.png)
 
-#### Zonal statistics
+## Zonal statistics
 In addition to the map output, a quantitative output is created for each file in the form of CSV output. For example, yearly mean precipitation values for 30 years, which are displayed in a single CSV output file. This is achieved using a SAGA algorithm [saga algorithm](https://docs.qgis.org/2.6/en/docs/user_manual/processing_algs/saga/shapes_grid/gridstatisticsforpolygons.html) from the QGIS Toolbox. This chapter discusses some of the code that is used to create this type of output.
 
-#####	Prepare Data
+####	Prepare Data
 The input into the function is a dictionary with extents of the districts. The function returns a single CSV file for each netCDF data file, and each district.
 
 ```Python
@@ -446,7 +446,7 @@ The clipped files in the folder have the district names included in their file n
     gilgit = [c for c in clipped_files if "gilgit" in c]
 ```
 
-##### Use Python to Run Algorithm from QGIS Toolbox
+#### Use Python to Run Algorithm from QGIS Toolbox
 For each raster file in a district folder, the SAGA algorithm can be executed (iteratively) in QGIS. An example of this is shown below.
 
 ```Python
@@ -458,7 +458,7 @@ For each raster file in a district folder, the SAGA algorithm can be executed (i
 
 The district lists can be transformed into a list of lists, containing the district names, where each district list contains the raster files to calculate the zonal statistics.
 
-##### Write Output to CSV
+#### Write Output to CSV
 Each timestep in a file will output only one value in a CSV file. The number of timesteps is linked to the number of bands in a file. For example, a file containing 30 years of yearly precipitation values contains 30 bands – and each band will output one value in a single CSV file. It is therefore necessary to adapt the output, in order to write these 30 values to a single CSV file for each netCDF file.
 
 First, the path to the CSV output is defined. The CSV output files are listed for each raster file of a certain district.
@@ -483,11 +483,11 @@ First, the path to the CSV output is defined. The CSV output files are listed fo
 | NPL     | Nepal     | 1     | Central | 3     | Narayani| 16     | Chitawan| 0     | 294,5235211 |
 
 | ISO     | NAME_0    | ID_1  | NAME_1  | ID_2  | NAME_2  | ID_3   | NAME_3  | CCN_3 | VolumesNaam |
-| :------------- | :------------- | :-------------   | :------------- | :------------- | :------------- | :-------------   | :------------- |
+| :------ | :-------  | :---  | :------ | :-----| :-----  | :----  | :------ | :---- | :------     |
 | NPL     | Nepal     | 1     | Central | 3     | Narayani| 16     | Chitawan| 0     | 270,3181818 |
 
 | ISO     | NAME_0    | ID_1  | NAME_1  | ID_2  | NAME_2  | ID_3   | NAME_3  | CCN_3 | VolumesNaam |
-| :------------- | :------------- | :-------------   | :------------- | :------------- | :------------- | :-------------   | :------------- |
+| :-----  | :-------- | :---  | :-----  | :--   | :----   | :----  | :------ | :----  | :------    |
 | NPL     | Nepal     | 1     | Central | 3     | Narayani| 16     | Chitawan| 0     | 88,22727273 |
 
 The function checks if the CSV file has any value, before it is copied. Next, a newly created CSV file is filled with 0’s, which can subsequently be filled with values from the CSV files. Each row in the new CSV file represents a timestep (e.g. a yearly value).  
@@ -511,10 +511,10 @@ The function checks if the CSV file has any value, before it is copied. Next, a 
 ```
 
 | Year     | Value     |
-| :------------- | :------------- |
-| 2011       | 294,5       |
-| 2012       | 270,3       |
-| 2013       | 88,2       |
+| :------- | :---------|
+| 2011     | 294,5     |
+| 2012     | 270,3     |
+| 2013     | 88,2      |
 
 Lastly, an output folder for the CSV files is created, if it does not exist yet. The CSV files can be saved in their appropriate output folders.
 
