@@ -4,7 +4,7 @@ This document describes some of the scripts that I created for my internship pro
 The dataset that was used consists of a reference and future dataset of netCDF data. The spatial resolution of the dataset is 10 x 10 km and has a daily timestep covering 1981 - 2010 (reference), and 2011 - 2100 (future). Data consists of minimum, maximum and average temperature values, and a precipitation sum. The projection of the dataset is WGS 84 UTM Zone 45N; EPSG: 32645.
 
 #### Climate data operators
-The [climate data operators][CDO] from the Max Planck Institute are a collection of powerful operators for handling netCDF files and performing calculations with climate datasets. For the calculation of climate indices, many different functions have been created by the institute that perform one specific task, such as calculating the yearly mean precipitation, or the maximum temperature. Other functions are aimed at calculating indices of temperature and precipitation extremes. These climate data operators were used to perform the calculations in the Indus Ganges and Brahmaputra basins. Two such examples are shown below; one function to calculate the number of consecutive dry days, and another function to calculate the number of heat waves.
+The [climate data operators](https://code.zmaw.de/projects/cdo) from the Max Planck Institute are a collection of powerful operators for handling netCDF files and performing calculations with climate datasets. For the calculation of climate indices, many different functions have been created by the institute that perform one specific task, such as calculating the yearly mean precipitation, or the maximum temperature. Other functions are aimed at calculating indices of temperature and precipitation extremes. These climate data operators were used to perform the calculations in the Indus Ganges and Brahmaputra basins. Two such examples are shown below; one function to calculate the number of consecutive dry days, and another function to calculate the number of heat waves.
 
 #####	Preparation netCDF File
 First, import the required packages to extract information from the netCDF files.
@@ -121,7 +121,7 @@ file_handle.close()
 ```
 
 #####	Reprojection
-The basemap and netCDF file are not yet in the same projection. The “pyproj” function was used to project from the WGS 84 / UTM Zone 45N to WGS 84 projection. The function input can simply be given as an EPSG-code (as used in “Source projection”) or a “Proj4” string (as used in “Target projection”), obtained from a [spatial reference website][SRW].
+The basemap and netCDF file are not yet in the same projection. The “pyproj” function was used to project from the WGS 84 / UTM Zone 45N to WGS 84 projection. The function input can simply be given as an EPSG-code (as used in “Source projection”) or a “Proj4” string (as used in “Target projection”), obtained from a [spatial reference website](http://spatialreference.org/).
 
 ```Python
 # Source projection
@@ -140,7 +140,7 @@ tr_lon, tr_lat = pyproj.transform(UTM_45N, WGS84, lons, lats)
 ```
 
 #####	Plot Using Basemap
-Finally, the [basemap][BSM] library is used to define the location and extent of the study area. This background map can easily be adapted and elaborated by adding country boundaries, coastlines or a satellite background.
+Finally, the [basemap](http://matplotlib.org/basemap/) library is used to define the location and extent of the study area. This background map can easily be adapted and elaborated by adding country boundaries, coastlines or a satellite background.
 
 ```Python
 # Basemap
@@ -152,7 +152,7 @@ cs = m.pcolormesh(xi, yi, pr[0], cmap='YlGnBu')
 plt.show()
 ```
 
-![projection](/Users/froedevrolijk/Dropbox/Tailoring_climate_data/documents/outputs_hiaware.png)
+![projection](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/projection.png)
 
 #### Dictionary
 An example of a dictionary used for this project is displayed below, showing several key – value pairs, where each key in the dictionary points to a unique file. The title that is stored in the key of a dictionary is almost complete. However, it is still missing the district name for the different areas in the study area. This name is added at the end of each value, for each key in the dictionary. This makes it possible to iterate over the districts and subsequently print the full title names to the map.
@@ -272,7 +272,7 @@ Next, the netCDF data can be plotted over the background map. This process start
         plt.clim(sb_min, sb_max)
 ```
 
-![daily_output](/Users/froedevrolijk/Dropbox/Tailoring_climate_data/documents/final/daily_output.png)
+![daily_output](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/daily_output.png)
 
 ##### Write output
 The map is now almost ready to be saved to disk. All that remains is creating an appropriate map title and file name. These should include the specific day for which the map was created. This is achieved by using the “format” functionality that allows user input or values that are stored in a variable to be “glued” together into one appropriate title or file name.
@@ -367,10 +367,10 @@ What remains is the GDAL Translate code, which is sent to the command line using
         print 'All done!'
 ```
 
-![clipped_files](/Users/froedevrolijk/Dropbox/Tailoring_climate_data/documents/final/clipped_files.png)
+![clipped_files](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/clipped_files.png)
 
 #### Zonal statistics
-In addition to the map output, a quantitative output is created for each file in the form of CSV output. For example, yearly mean precipitation values for 30 years, which are displayed in a single CSV output file. This is achieved using a SAGA algorithm [saga algorithm][SAGA] from the QGIS Toolbox. This chapter discusses some of the code that is used to create this type of output.
+In addition to the map output, a quantitative output is created for each file in the form of CSV output. For example, yearly mean precipitation values for 30 years, which are displayed in a single CSV output file. This is achieved using a SAGA algorithm [saga algorithm](https://docs.qgis.org/2.6/en/docs/user_manual/processing_algs/saga/shapes_grid/gridstatisticsforpolygons.html) from the QGIS Toolbox. This chapter discusses some of the code that is used to create this type of output.
 
 #####	Prepare Data
 The input into the function is a dictionary with extents of the districts. The function returns a single CSV file for each netCDF data file, and each district.
@@ -530,13 +530,3 @@ Lastly, an output folder for the CSV files is created, if it does not exist yet.
                 summed_data.to_csv(csv_files_path + str(district) + '/' +  
                 tif_file.rstrip('.tif').split('/')[-1] + '.csv')
 ```
-
-[climate data operators][CDO]
-[spatial reference website][SRW]
-[basemap][BSM]
-[saga algorithm][SAGA]
-
-[CDO]: https://code.zmaw.de/projects/cdo
-[SRW]: http://spatialreference.org/
-[BSM]: http://matplotlib.org/basemap/
-[SAGA]: https://docs.qgis.org/2.6/en/docs/user_manual/processing_algs/saga/shapes_grid/gridstatisticsforpolygons.html
