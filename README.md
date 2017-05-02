@@ -152,7 +152,7 @@ cs = m.pcolormesh(xi, yi, pr[0], cmap='YlGnBu')
 plt.show()
 ```
 
-![projection](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/projection.png)
+![projection](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/projection.png =250x)
 
 #### Dictionary
 An example of a dictionary used for this project is displayed below, showing several key – value pairs, where each key in the dictionary points to a unique file. The title that is stored in the key of a dictionary is almost complete. However, it is still missing the district name for the different areas in the study area. This name is added at the end of each value, for each key in the dictionary. This makes it possible to iterate over the districts and subsequently print the full title names to the map.
@@ -272,7 +272,7 @@ Next, the netCDF data can be plotted over the background map. This process start
         plt.clim(sb_min, sb_max)
 ```
 
-![daily_output](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/daily_output.png)
+![daily_output](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/daily_output.png =250x)
 
 ##### Write output
 The map is now almost ready to be saved to disk. All that remains is creating an appropriate map title and file name. These should include the specific day for which the map was created. This is achieved by using the “format” functionality that allows user input or values that are stored in a variable to be “glued” together into one appropriate title or file name.
@@ -367,7 +367,7 @@ What remains is the GDAL Translate code, which is sent to the command line using
         print 'All done!'
 ```
 
-![clipped_files](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/clipped_files.png)
+![clipped_files](https://github.com/froedevrolijk/climate-himalaya/blob/master/images/clipped_files.png =250x)
 
 #### Zonal statistics
 In addition to the map output, a quantitative output is created for each file in the form of CSV output. For example, yearly mean precipitation values for 30 years, which are displayed in a single CSV output file. This is achieved using a SAGA algorithm [saga algorithm](https://docs.qgis.org/2.6/en/docs/user_manual/processing_algs/saga/shapes_grid/gridstatisticsforpolygons.html) from the QGIS Toolbox. This chapter discusses some of the code that is used to create this type of output.
@@ -479,7 +479,7 @@ First, the path to the CSV output is defined. The CSV output files are listed fo
 ```
 
 | ISO     | NAME_0    | ID_1  | NAME_1  | ID_2  | NAME_2  | ID_3   | NAME_3  | CCN_3 | VolumesNaam |
-| :------------- | :------------- | :-------------   | :------------- | :------------- | :------------- | :-------------   | :------------- |
+| :------ | :-------- | :--   | :------ | :---- | :------ | :----- | :-------| :---- | :-------    |
 | NPL     | Nepal     | 1     | Central | 3     | Narayani| 16     | Chitawan| 0     | 294,5235211 |
 
 | ISO     | NAME_0    | ID_1  | NAME_1  | ID_2  | NAME_2  | ID_3   | NAME_3  | CCN_3 | VolumesNaam |
